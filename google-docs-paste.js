@@ -39,15 +39,34 @@ var DriveParser = function(){
 				return a;
 			}
 		},
-		{
-			"nodeName": "P",
-			"replace": function(node) {
-				while (node.attributes.length > 0) {
-					node.removeAttribute(node.attributes[0].name);
-				}
-				return node;
-			}
-		},
+        {
+            "nodeName": "P",
+            "replace": function(node) {
+                if (node.parentNode.nodeName == "LI") {
+                    console.log("Removing P inside LI");
+                    var content = node.textContent;
+                    content = document.createTextNode(content);
+                    var parent = node.parentElement;
+                    parent.replaceChild(content, node);
+                    return node;
+                }
+                else {
+                    while (node.attributes.length > 0) {
+                        node.removeAttribute(node.attributes[0].name);
+                    }
+                    return node;
+                }
+            }
+        },
+        {
+            "nodeName": "LI",
+            "replace": function(node) {
+                while (node.attributes.length > 0) {
+                    node.removeAttribute(node.attributes[0].name);
+                }
+                return node;
+            }
+        },
 		{
 			"nodeName": "BR",
 			"replace": function(node) {
@@ -88,11 +107,11 @@ var DriveParser = function(){
 		console.log("Check " + node.nodeName + " for strip");
 		console.log(node.cloneNode(true).children);
 
-		if (node.childNodes.length) {
-			for (var i = 0; i < node.childNodes.length; i++) {
-				this.stripTags(node.childNodes[i], root);
-			}
-		}
+        if (node.childNodes.length) {
+            for (var i = 0; i < node.childNodes.length; i++) {
+                this.stripTags(node.childNodes[i], root);
+            }
+        }
 
 		if ( node.nodeType == Node.ELEMENT_NODE && ! $(node).hasClass('processed') && parent ) {
 			// If a node has a replacement, don't process it now.
